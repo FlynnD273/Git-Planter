@@ -1,0 +1,70 @@
+﻿<Window x:Class="GitPlanter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GitPlanter"
+        xmlns:vm="clr-namespace:GitPlanter.ViewModel"
+        xmlns:c="clr-namespace:GitPlanter.Converter"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <c:StatusToColorConverter x:Key="StatusToColorConverter"/>
+        <c:ScaleWidthConverter x:Key="ScaleWidthConverter"/>
+        <c:ScaleHeightConverter x:Key="ScaleHeightConverter"/>
+    </Window.Resources>
+    <Window.DataContext>
+        <vm:ViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <ListView Grid.Column ="0" ItemsSource="{Binding Commits}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Grid.Column="0" Margin="5,0" Text="{Binding Commit.Id}"/>
+                        <TextBlock Grid.Column="1" Margin="5,0" Text="{Binding Commit.Message}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ItemsControl Grid.Column="1" ItemsSource="{Binding Commits}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas IsItemsHost="True"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Line StrokeThickness="15" Stroke="Brown"
+                              X1="{Binding Path=X, Converter={StaticResource ScaleWidthConverter}, ConverterParameter={x:Reference commitTree}}"
+                              Y1="{Binding Path=Y, Converter={StaticResource ScaleHeightConverter}, ConverterParameter={x:Reference commitTree}}"
+                              X2="{Binding Path=X2, Converter={StaticResource ScaleWidthConverter}, ConverterParameter={x:Reference commitTree}}"
+                              Y2="{Binding Path=Y2, Converter={StaticResource ScaleHeightConverter}, ConverterParameter={x:Reference commitTree}}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ItemsControl x:Name="commitTree" Grid.Column="1" ItemsSource="{Binding Commits}" Loaded="commitTree_Loaded">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas IsItemsHost="True" Background="Transparent"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="-10,-10,0,0" Height="20">
+                        <StackPanel.RenderTransform>
+                            <TranslateTransform X="{Binding Path=X, Converter={StaticResource ScaleWidthConverter}, ConverterParameter={x:Reference commitTree}}"
+                                        Y="{Binding Path=Y, Converter={StaticResource ScaleHeightConverter}, ConverterParameter={x:Reference commitTree}}"/>
+                        </StackPanel.RenderTransform>
+                        <Ellipse Width="20" Height="20" Fill="{Binding Status, Converter={StaticResource StatusToColorConverter}}"/>
+                        <TextBlock Text="{Binding Commit.Message}" Margin="5,0,0,0"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</Window>
