@@ -27,6 +27,9 @@ namespace GitPlanter.Converter
                 case NodeStatus.Remote:
                     color = Colors.SlateGray;
                     break;
+                case NodeStatus.LocalHead:
+                    color = Colors.Goldenrod;
+                    break;
             }
             return new SolidColorBrush(color);
         }

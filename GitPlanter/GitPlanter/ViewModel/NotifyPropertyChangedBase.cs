@@ -16,10 +16,10 @@ namespace GitPlanter.ViewModel
             Action<T> onChangedCallback = null,
             [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
-            {
-                return;
-            }
+            //if (EqualityComparer<T>.Default.Equals(field, newValue))
+            //{
+            //    return;
+            //}
 
             T oldValue = field;
 

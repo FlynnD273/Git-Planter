@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -15,9 +16,9 @@ namespace GitPlanter.Converter
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             double percent = (double)value;
-            if (parameter is ItemsControl canvas)
+            if (parameter is FrameworkElement sizeControl)
             {
-                return percent * canvas.ActualWidth;
+                return percent * sizeControl.ActualWidth;
             }
             return 1;
         }

@@ -4,6 +4,9 @@
              xmlns:local="clr-namespace:GitPlanter"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <SolidColorBrush x:Key="PrimaryColorBrush">#00ccaa</SolidColorBrush>
+        <SolidColorBrush x:Key="PrimaryDarkColorBrush">#003a59</SolidColorBrush>
+        <SolidColorBrush x:Key="SecondaryColorBrush">#00cc45</SolidColorBrush>
+        <SolidColorBrush x:Key="SecondaryDarkColorBrush">#00584b</SolidColorBrush>
     </Application.Resources>
 </Application>

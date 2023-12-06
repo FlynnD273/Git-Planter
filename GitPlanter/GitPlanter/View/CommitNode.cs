@@ -1,4 +1,5 @@
-﻿using GitPlanter.ViewModel;
+﻿using GitPlanter.Command;
+using GitPlanter.ViewModel;
 using LibGit2Sharp;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace GitPlanter.View
 {
@@ -14,9 +16,14 @@ namespace GitPlanter.View
         Remote,
         Local,
         Both,
+        LocalHead,
     }
     internal class CommitNode : NotifyPropertyChangedBase
     {
+        public event EventHandler<Commit> PushEvent;
+        public event EventHandler<Commit> PullEvent;
+        public DelegateCommand OnClickCommand { get; set; }
+
         private NodeStatus _status;
         public NodeStatus Status
         {
@@ -58,6 +65,13 @@ namespace GitPlanter.View
             set { _UpdateField(ref _Y2, value); }
         }
 
+        private double _width;
+        public double Width
+        {
+            get { return _width; }
+            set { _UpdateField(ref _width, value); }
+        }
+
         private CommitNode _next;
         public CommitNode Next
         {
@@ -68,6 +82,28 @@ namespace GitPlanter.View
         public CommitNode(Commit commit)
         {
             Commit = commit;
+            OnClickCommand = new(_OnClick);
+        }
+
+        private void _OnClick()
+        {
+            if (Status == NodeStatus.Local)
+            {
+                PushEvent.Invoke(this, Commit);
+            }
+            else if (Status == NodeStatus.Remote)
+            {
+                PullEvent.Invoke(this, Commit);
+            }
+        }
+
+        public void SizeChanged()
+        {
+            X = X;
+            Y = Y;
+            Width = Width;
+            X2 = X2;
+            Y2 = Y2;
         }
     }
 }

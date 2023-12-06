@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "jd//kxWtR+bN4AwHld/LXIIgiMaTLE46VvNANPaVzFVxo8BaOv89/e1K4hN6LBUDezWR/RZEUIcF7ytRzxMUFg==",
+  "success": true,
+  "projectFilePath": "D:\\repos\\Git-Planter\\GitPlanter\\GitPlanter\\GitPlanter.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Flynn\\.nuget\\packages\\libgit2sharp\\0.28.0\\libgit2sharp.0.28.0.nupkg.sha512",
+    "C:\\Users\\Flynn\\.nuget\\packages\\libgit2sharp.nativebinaries\\2.0.320\\libgit2sharp.nativebinaries.2.0.320.nupkg.sha512"
+  ],
+  "logs": []
+}

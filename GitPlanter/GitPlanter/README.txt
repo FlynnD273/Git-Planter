@@ -1,0 +1,5 @@
+You should just be able to run the included exe and view the repository. You won't be able to push anything, but you should be able to at least edit files in the demo repo and commit them. If you want to push things, you'll have to stick a repo that you own into the DemoRepo directory, instead of the one I have there right now. 
+You will need to have git installed on your computer, it'll use the stored login credentials for everything. 
+File changes should be listed in the Git Changes tab, and you can drag the changes from the unstaged side to the staged side, then commit after adding a commit message. 
+
+If you want to view the source code, it's here:  https://github.com/FlynnD273/Git-Planter

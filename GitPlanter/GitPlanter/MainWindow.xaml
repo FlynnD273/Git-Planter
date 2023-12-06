@@ -7,64 +7,117 @@
         xmlns:vm="clr-namespace:GitPlanter.ViewModel"
         xmlns:c="clr-namespace:GitPlanter.Converter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Git Planter" Height="450" Width="800">
     <Window.Resources>
         <c:StatusToColorConverter x:Key="StatusToColorConverter"/>
+        <c:ChangeStatusToColorConverter x:Key="ChangeStatusToColorConverter"/>
+        <c:StatusToTooltipConverter x:Key="StatusToTooltipConverter"/>
         <c:ScaleWidthConverter x:Key="ScaleWidthConverter"/>
         <c:ScaleHeightConverter x:Key="ScaleHeightConverter"/>
+        <BooleanToVisibilityConverter x:Key="MyBoolToVisibilityConverter"/>
+        <ImageBrush x:Key="BackgroundBrush" ImageSource="pack://application:,,,/GitPlanter;component/Image/Background.png" Stretch="UniformToFill"/>
     </Window.Resources>
     <Window.DataContext>
         <vm:ViewModel/>
     </Window.DataContext>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <ListView Grid.Column ="0" ItemsSource="{Binding Commits}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Grid.Column="0" Margin="5,0" Text="{Binding Commit.Id}"/>
-                        <TextBlock Grid.Column="1" Margin="5,0" Text="{Binding Commit.Message}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <ItemsControl Grid.Column="1" ItemsSource="{Binding Commits}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas IsItemsHost="True"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Line StrokeThickness="15" Stroke="Brown"
-                              X1="{Binding Path=X, Converter={StaticResource ScaleWidthConverter}, ConverterParameter={x:Reference commitTree}}"
-                              Y1="{Binding Path=Y, Converter={StaticResource ScaleHeightConverter}, ConverterParameter={x:Reference commitTree}}"
-                              X2="{Binding Path=X2, Converter={StaticResource ScaleWidthConverter}, ConverterParameter={x:Reference commitTree}}"
-                              Y2="{Binding Path=Y2, Converter={StaticResource ScaleHeightConverter}, ConverterParameter={x:Reference commitTree}}"/>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <ItemsControl x:Name="commitTree" Grid.Column="1" ItemsSource="{Binding Commits}" Loaded="commitTree_Loaded">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas IsItemsHost="True" Background="Transparent"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Margin="-10,-10,0,0" Height="20">
-                        <StackPanel.RenderTransform>
-                            <TranslateTransform X="{Binding Path=X, Converter={StaticResource ScaleWidthConverter}, ConverterParameter={x:Reference commitTree}}"
-                                        Y="{Binding Path=Y, Converter={StaticResource ScaleHeightConverter}, ConverterParameter={x:Reference commitTree}}"/>
-                        </StackPanel.RenderTransform>
-                        <Ellipse Width="20" Height="20" Fill="{Binding Status, Converter={StaticResource StatusToColorConverter}}"/>
-                        <TextBlock Text="{Binding Commit.Message}" Margin="5,0,0,0"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </Grid>
+    <TabControl SelectedIndex="{Binding TabIndex}">
+        <TabItem Header="Commit Tree">
+            <Grid x:Name="commitTree" Loaded="commitTree_Loaded" SizeChanged="commitTree_SizeChanged">
+                <ItemsControl ItemsSource="{Binding Commits}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas IsItemsHost="True" Background="{StaticResource BackgroundBrush}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Line StrokeThickness="{Binding Width}" Stroke="Brown"
+                                    X1="{Binding Path=X, Converter={StaticResource ScaleWidthConverter}, ConverterParameter={x:Reference commitTree}}"
+                                    Y1="{Binding Path=Y, Converter={StaticResource ScaleHeightConverter}, ConverterParameter={x:Reference commitTree}}"
+                                    X2="{Binding Path=X2, Converter={StaticResource ScaleWidthConverter}, ConverterParameter={x:Reference commitTree}}"
+                                    Y2="{Binding Path=Y2, Converter={StaticResource ScaleHeightConverter}, ConverterParameter={x:Reference commitTree}}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Commits}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas IsItemsHost="True" Background="Transparent"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="-10,-10,0,0" Height="20">
+                                <StackPanel.RenderTransform>
+                                    <TranslateTransform X="{Binding Path=X, Converter={StaticResource ScaleWidthConverter}, ConverterParameter={x:Reference commitTree}}"
+                                                        Y="{Binding Path=Y, Converter={StaticResource ScaleHeightConverter}, ConverterParameter={x:Reference commitTree}}"/>
+                                </StackPanel.RenderTransform>
+                                <Button Command="{Binding OnClickCommand}" ToolTip="{Binding Status, Converter={StaticResource StatusToTooltipConverter}}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Ellipse Width="20" Height="20" Fill="{Binding Status, Converter={StaticResource StatusToColorConverter}}"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                <TextBlock Text="{Binding Commit.Message}" Background="AliceBlue" Padding="4,0" Margin="5,0,0,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Button Content="🗘" FontSize="20" ToolTip="Refresh changes" Command="{Binding RefreshCommand}"
+                        Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                        Background="{StaticResource SecondaryColorBrush}"/>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Local Changes">
+            <Grid Background="{StaticResource BackgroundBrush}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ListView Grid.Column="0" x:Name="unstagedChangesList" ItemsSource="{Binding UnstagedChanges}"
+                          PreviewMouseDown="ChangesList_PreviewMouseDown" 
+                          MouseMove="ChangesList_MouseMove"
+                          AllowDrop="True" Drop="ChangesList_Drop"
+                          Background="Transparent">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Entry.FilePath}" Padding="10,0"
+                                       Background="{Binding ChangeStatus, Converter={StaticResource ChangeStatusToColorConverter}}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Button Grid.Column="0" Content="🗘" Background="{StaticResource SecondaryColorBrush}" FontSize="20" ToolTip="Refresh changes" Command="{Binding RefreshChangesCommand}"
+                        Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Content="Staged Changes" Foreground="{StaticResource SecondaryDarkColorBrush}" FontFamily="Verdana" FontWeight="Bold" HorizontalAlignment="Center" FontSize="18"/>
+                    <ListView Grid.Row="1" x:Name="stagedChangesList" ItemsSource="{Binding StagedChanges}" SelectionMode="Single"
+                              PreviewMouseDown="ChangesList_PreviewMouseDown" 
+                              MouseMove="ChangesList_MouseMove"
+                              AllowDrop="True" Drop="ChangesList_Drop"
+                              Background="Transparent">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Entry.FilePath}" Padding="10,0"
+                                           Background="{Binding ChangeStatus, Converter={StaticResource ChangeStatusToColorConverter}}"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <TextBox Grid.Row="2" x:Name="commitMessageText" Text="{Binding CommitMessage}"/>
+                    <Label Grid.Row="2" Content="Enter commit message..."
+                           Margin="0,-5,0,0"
+                           Foreground="Gray" IsHitTestVisible="False"
+                           Visibility="{Binding ElementName=commitMessageText, Path=Text.IsEmpty, Converter={StaticResource MyBoolToVisibilityConverter}}" />
+                    <Button Grid.Row="3" Content="Commit" FontWeight="Bold" Background="{StaticResource PrimaryColorBrush}" Command="{Binding CommitCommand}" Padding="10,5" HorizontalAlignment="Center"/>
+                </Grid>
+            </Grid>
+
+        </TabItem>
+    </TabControl>
 </Window>
