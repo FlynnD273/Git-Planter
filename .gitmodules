@@ -1,0 +1,3 @@
+[submodule "GitPlanter/GitPlanter/bin/Debug/net8.0-windows/GitPlanter/GitPlanter/bin/Debug/net8.0-windows/DemoRepo"]
+	path = GitPlanter/GitPlanter/bin/Debug/net8.0-windows/GitPlanter/GitPlanter/bin/Debug/net8.0-windows/DemoRepo
+	url = https://github.com/FlynnD273/DemoRepo
